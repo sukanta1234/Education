@@ -1,0 +1,127 @@
+import * as React from "react";
+import { useTheme } from "@mui/material/styles";
+import Box from "@mui/material/Box";
+import MobileStepper from "@mui/material/MobileStepper";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
+import Button from "@mui/material/Button";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import SwipeableViews from "react-swipeable-views";
+import { autoPlay } from "react-swipeable-views-utils";
+import { useDispatch } from "react-redux";
+import { useEffect } from "react";
+import { bannerDataApi } from "../../../Store/homeSlice";
+import { useSelector } from "react-redux";
+import { banner_pic } from "../../../Helper";
+import { Link } from "react-router-dom";
+
+const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+const navItems = ['About',"Course","Blog"];
+
+
+function Banner() {
+  const dispatch = useDispatch();
+  const data = useSelector((state) => state.home);
+ 
+  // console.log(data.bdata);
+  useEffect(() => {
+    dispatch(bannerDataApi());
+  },[]);
+  const theme = useTheme();
+  const [activeStep, setActiveStep] = React.useState(0);
+  // const maxSteps = images.length;
+
+  const handleStepChange = (step) => {
+    setActiveStep(step);
+  };
+
+  return (
+    <>
+      <Box sx={{ maxWidth: "100%" }}>
+        <AutoPlaySwipeableViews
+          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+          index={activeStep}
+          onChangeIndex={handleStepChange}
+          enableMouseEvents
+        >
+          {data.bdata.map((step, index) => (
+            <div key={step.label}>
+              {Math.abs(activeStep - index) <= 2 ? (
+                <>
+                  <Box
+                    sx={{
+                      position: "relative",
+                      height: "1000px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    <img
+                      src={banner_pic(step._id)}
+                      alt=""
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+
+                    <Box
+                      sx={{
+                        position: "absolute",
+
+                        color: "#fff",
+                        padding: 2,
+
+                        margin: "0 auto",
+                        width: "750px",
+                        backgroundColor: "#1a1e1e",
+                        borderTop: "4px solid green",
+                        height: "250px",
+                      }}
+                    >
+                      <Typography variant="h5" component="div">
+                        {step.title}
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          marginTop: "30px",
+                        }}
+                      >
+                        {step.description}
+                      </Typography>
+                      {/* {navItems.map((item) => (
+             <Button
+             variant="outlined"
+             size="small"
+             sx={{
+               position: "absolute",
+               bottom: "20px",
+               left: "50%",
+               transform: "translateX(-50%)",
+             }}
+             component={Link}
+             to={`/${item}`}
+            
+           >
+             Read More
+           </Button>
+             ))} */}
+                      
+                    </Box>
+                  </Box>
+                </>
+              ) : null}
+            </div>
+          ))}
+        </AutoPlaySwipeableViews>
+      </Box>
+      
+    </>
+  );
+}
+
+export default Banner;
