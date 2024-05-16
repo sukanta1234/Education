@@ -49,7 +49,7 @@ const coursesSlice = createSlice({
       })
       .addCase(purchesApi.fulfilled, (state, { payload }) => {
         state.status = STATUS.IDLE;
-        if (payload?.status === 200) {
+        if (payload?.message === "you apply course Successfully") {
           toast(payload?.message);
         }
       })
